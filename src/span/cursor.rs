@@ -13,6 +13,7 @@ pub struct CursorSpan {
 
     pub width: f32,
     pub height: f32,
+    pub order: u8,
 
     state: wand::core::State,
     fps: wand::FpsCounter, 
@@ -37,6 +38,7 @@ impl CursorSpan {
             width,
             height,
             state,
+            order: 1,
             fps,
             font_cache: RefCell::new(None),
         }
@@ -47,8 +49,8 @@ impl CursorSpan {
     }
 
     fn draw_outline(&self, ctx: &web_sys::CanvasRenderingContext2d) {
-        ctx.set_stroke_style(&JsValue::from_str("white"));
-        ctx.stroke_rect(self.x, self.y, self.w, self.h);
+        ctx.set_fill_style(&JsValue::from_str("black"));
+        ctx.fill_rect(self.x, self.y, self.w, self.h);
     }
 
 }
@@ -98,6 +100,10 @@ impl wand::SpanTrait for CursorSpan {
         let mut font = self.font_cache.borrow_mut();
         *font = None;
         (0., 0., true)
+    }
+
+    fn get_order(&self) -> u8 {
+        self.order
     }
 
 }
