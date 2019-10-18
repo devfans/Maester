@@ -15,16 +15,25 @@ impl Application {
         let state = app.get_state();
 
         let mut scene = wand::Scene::default(state.clone());
-        let section1 = app.new_section("section1", 1., 1., 0.);
+        let section_0 = app.new_section("dashboard", 1., 0.76, 0.);
+        let section_0_1 = app.new_section("godswood", 0.8, 1., 0.);
+        let section_0_2 = app.new_section("alerts", 1., 1., 0.);
+        let section_1 = app.new_section("worklog", 1., 1., 0.);
         let cursor_span = CursorSpan::new(state.clone(), app.counter.clone(), "cursor", "Cursor:(N/A)", 0.2, 0.2);
         let world_span = godswood::create_godswood(&app);
         {
-            let mut section = section1.borrow_mut();
+            let mut section = section_0_1.borrow_mut();
             section.register_span(cursor_span);
             section.register_span(world_span);
         }
+        {
+            let mut section = section_0.borrow_mut();
+            section.register_section(&section_0_1);
+            section.register_section(&section_0_2);
+        }
 
-        scene.add_section(&section1);
+        scene.add_section(&section_0);
+        scene.add_section(&section_1);
         app.register(scene);
 
         Self {

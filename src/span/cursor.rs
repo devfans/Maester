@@ -49,8 +49,8 @@ impl CursorSpan {
     }
 
     fn draw_outline(&self, ctx: &web_sys::CanvasRenderingContext2d) {
-        ctx.set_fill_style(&JsValue::from_str("black"));
-        ctx.fill_rect(self.x, self.y, self.w, self.h);
+        ctx.set_stroke_style(&JsValue::from_str("white"));
+        ctx.stroke_rect(self.x, self.y, self.w, self.h);
     }
 
 }
@@ -73,7 +73,7 @@ impl wand::SpanTrait for CursorSpan {
         }
     }
 
-    fn draw(&self, ctx: &web_sys::CanvasRenderingContext2d) {
+    fn render_tick(&self, ctx: &web_sys::CanvasRenderingContext2d) {
         self.draw_outline(ctx);
         let mut font = self.font_cache.borrow_mut();
         if font.is_none() {
