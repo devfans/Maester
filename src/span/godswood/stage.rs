@@ -101,7 +101,7 @@ impl Stage for Godsstage {
             let wood = wood.borrow();
             // let gap = wood.base_gap * -1.0f32;
 
-            nodes.push_back(((0.0, 0.0, -100.0), wood.wood.get_root(), 1));
+            nodes.push_back(((0.0, 0.0, -10.), wood.wood.get_root(), 1));
 
             loop {
                 let node = nodes.pop_front();

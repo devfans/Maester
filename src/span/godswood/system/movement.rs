@@ -27,17 +27,30 @@ impl System for MovementSystem {
         }) {
             transform.append_rotation(
                 Vector3::y_axis(),
-                self.input.borrow_mut().axis("ArrowLeft", "ArrowRight") * 0.1
+                self.input.borrow_mut().axis("a", "d") * 0.1
             );
             transform.append_rotation(
                 Vector3::x_axis(),
-                self.input.borrow_mut().axis("ArrowUp", "ArrowDown") * 0.1
+                self.input.borrow_mut().axis("w", "s") * 0.1
             );
             transform.prepend_translation(
-                Vector3::new(0., 0., self.input.borrow_mut().axis("z", "x") * 0.6)
+                Vector3::new(0., 0., self.input.borrow_mut().axis("v", "b") * 0.6)
             );
         }
-
+        
+        let active_camera = self.state.active_camera.get();
+        let camera = transforms.get_mut(&active_camera).unwrap();
+        camera.append_rotation(
+            Vector3::y_axis(),
+            self.input.borrow_mut().axis("ArrowLeft", "ArrowRight") * 0.1
+        );
+        camera.append_rotation(
+            Vector3::x_axis(),
+            self.input.borrow_mut().axis("ArrowUp", "ArrowDown") * 0.1
+        );
+        camera.prepend_translation(
+            Vector3::new(0., 0., self.input.borrow_mut().axis("z", "x") * 0.6)
+        );
     }
 }
 
