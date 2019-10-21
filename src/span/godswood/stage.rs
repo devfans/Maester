@@ -61,36 +61,33 @@ impl Stage for Godsstage {
                 }
             "#;
         self.woods.add_wood(&serde_json::from_str(wood).unwrap());
-        let vertices: Vec<core::Point3<f32>> = [
-            (-2., -2., 4.,),
-            (2., -2., 4.),
-            (2., 2., 4.),
-            (-2., 2., 4.),
-            (-2., -2., 4.,),
-            (-2., -2., -4.,),
-            (2., -2., -4.),
-            (2., 2., -4.),
-            (-2., 2., -4.),
-            (-2., -2., -4.,),
-            // other lines
-            (2., -2., 4.),
-            (2., -2., -4.),
-            (2., 2., 4.),
-            (2., 2., -4.),
-            (-2., 2., 4.),
-            (-2., 2., -4.)
-        ]
-            .into_iter()
-            .map(|v| core::Point3::new(v.0, v.1, v.2)).collect();
 
+        macro_rules! draw_line {
+            ($point: expr, $direction: expr) => {
+                {
+                    let mut state = self.state.shape_store.borrow_mut();
+                    state.push(core::Shape::Line { begin: $point, end: $point + $direction });
+                }
+            }
+        }
+        
         macro_rules! create_node {
             ($node: expr, $pos: expr, $id: expr, $name: expr) => {
                 {
+                    log!("new node{:?}", $pos);
                     // Attach cube entity
                     let entity = self.state.create_entity();
                     let mut transform = TransformComponent::default();
                     transform.set_translation_xyz($pos.0, $pos.1, $pos.2);
-                    let mesh = core::BasicMesh::new(vertices.clone(), vec!(9, 11, 13));
+                    let mut mesh = core::ComplexMesh::new();
+                    mesh.brushes.push(core::Brush::Sphere {
+                        fill: Some("rgba(100, 100, 100, 0.2)".to_string()),
+                        stroke: Some("orange".to_string()),
+                        center: core::Point3::new(0., 0., 0.),
+                        radius: 2_f32,
+                        action: 3,
+                    });
+                    let mesh: core::Mesh = Box::new(mesh);
                     self.state.bind_component(entity, mesh);
                     self.state.bind_component(entity, transform);
                     self.state.bind_component(entity, GodsnodeComponent { node: $node });
@@ -123,12 +120,12 @@ impl Stage for Godsstage {
                 if size == 0 {
                     continue;
                 } else if size == 1 {
-                    // draw_line!(Point3::new(x, y, z), Vector3::new(0.0, -wood.base_gap, 0.0));
+                    draw_line!(core::Point3::new(x, y, z), core::Vector3::new(0.0, -wood.base_gap, 0.0));
                     nodes.push_back(((x, y - wood.base_gap, z), children[0].clone(), depth + 1));
                     continue;
                 }
 
-                // draw_line!(Point3::new(x, y, z), direction);
+                draw_line!(core::Point3::new(x, y, z), core::Vector3::new(0., -wood.base_gap, 0.));
                 // draw_circle!(Point3::new(x, y - wood.base_gap, z), scale);
                 // break;
 
@@ -141,7 +138,7 @@ impl Stage for Godsstage {
                     let kid_y = y - wood.base_gap;
                     let kid_z = z - scale * angle.sin();
 
-                    // draw_line!(Point3::new(x, y, z), Vector3::new(kid_x - x, kid_y - y, kid_z - z));
+                    draw_line!(core::Point3::new(x, y, z), core::Vector3::new(kid_x - x, kid_y - y, kid_z - z));
                     points.push((kid_x, kid_y, kid_z));
                 }
 
