@@ -51,6 +51,17 @@ impl System for MovementSystem {
         camera.prepend_translation(
             Vector3::new(0., 0., self.input.borrow_mut().axis("z", "x") * 0.6)
         );
+
+        camera.prepend_translation(
+            Vector3::new(0., self.input.borrow_mut().axis("i", "k") * 0.6, 0.)
+        );
+
+        let angle = self.input.borrow_mut().axis("j", "l") * 0.02 as f32;
+        let trans = camera.translation().clone();
+
+        let pos = Point3::new(0., 0., 0.) + UnitQuaternion::from_axis_angle(&Vector3::y_axis(), angle) * trans;
+        // camera.set_translation_xyz(pos.x, pos.y, pos.z);
+        camera.prepend_rotation(Vector3::y_axis(), angle);
     }
 }
 
