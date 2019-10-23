@@ -28,8 +28,8 @@ impl Godswoods {
         let mut godswood = Godswood {
             wood,
             scales: HashMap::new(),
-            base_scale: 1.0,
-            base_gap: 10.0,
+            base_scale: 4.0,
+            base_gap: 20.0,
         };
 
         godswood.calculate_scales();

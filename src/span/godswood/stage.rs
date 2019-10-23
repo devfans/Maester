@@ -23,6 +23,19 @@ impl Godsstage {
 
 impl Stage for Godsstage {
     fn on_enter(&mut self) {
+        {
+            // Roll camera a bit facing down
+            let c_store = self.state.component_store.borrow();
+            let mut transforms = c_store.get_mut::<TransformComponent>();
+            let active_camera = self.state.active_camera.get();
+            let camera = transforms.get_mut(&active_camera).unwrap();
+            camera.append_rotation(
+                core::Vector3::x_axis(),
+                -0.1
+            );
+        }
+
+
         let wood = r#"
             {
                   "name": "sample-application",
@@ -84,7 +97,7 @@ impl Stage for Godsstage {
                         fill: Some("rgba(100, 100, 100, 0.2)".to_string()),
                         stroke: Some("orange".to_string()),
                         center: core::Point3::new(0., 0., 0.),
-                        radius: 2_f32,
+                        radius: 5_f32,
                         action: 3,
                     });
                     let mesh: core::Mesh = Box::new(mesh);
@@ -101,7 +114,7 @@ impl Stage for Godsstage {
             let wood = wood.borrow();
             // let gap = wood.base_gap * -1.0f32;
 
-            nodes.push_back(((0.0, 0.0, -10.), wood.wood.get_root(), 1));
+            nodes.push_back(((0.0, 0.0, 0.), wood.wood.get_root(), 1));
 
             loop {
                 let node = nodes.pop_front();
@@ -125,7 +138,7 @@ impl Stage for Godsstage {
                     continue;
                 }
 
-                draw_line!(core::Point3::new(x, y, z), core::Vector3::new(0., -wood.base_gap, 0.));
+                // draw_line!(core::Point3::new(x, y, z), core::Vector3::new(0., -wood.base_gap, 0.));
                 // draw_circle!(Point3::new(x, y - wood.base_gap, z), scale);
                 // break;
 
