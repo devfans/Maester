@@ -2,7 +2,7 @@ use std::rc::Rc;
 use std::cell::RefCell;
 use std::collections::{VecDeque, HashMap};
 use std::f32::consts::PI;
-use dragon::{ecs::{WorldState, Stage, TransformComponent}, core};
+use dragon::{ecs::{WorldState, Stage, TransformComponent, WidgetComponent}, core};
 use crate::span::godswood::tree::*;
 use crate::span::godswood::component::GodsnodeComponent;
 
@@ -101,8 +101,10 @@ impl Stage for Godsstage {
                         action: 3,
                     });
                     let mesh: core::Mesh = Box::new(mesh);
+                    let widget = WidgetComponent::framed_text_widget($name, 0., -12., 35., 9.);
                     self.state.bind_component(entity, mesh);
                     self.state.bind_component(entity, transform);
+                    self.state.bind_component(entity, widget);
                     self.state.bind_component(entity, GodsnodeComponent { node: $node });
                 }
             }
@@ -126,7 +128,7 @@ impl Stage for Godsstage {
                 let node_arc = node.upgrade().unwrap();
                 let scale = wood.scales.get(&depth).unwrap() * wood.base_scale;
                 let node = node_arc.borrow();
-                create_node!(node_arc.clone(), (x, y, z), node.id, node.name.clone());
+                create_node!(node_arc.clone(), (x, y, z), node.id, &node.display_name);
 
                 let children = node.get_children();
                 let size = children.len();
